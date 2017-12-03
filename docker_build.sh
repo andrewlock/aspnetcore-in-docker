@@ -1,7 +1,8 @@
 GITSHA1=${GITSHA1:=$(git rev-parse HEAD)}
-DOCKER_IMAGE_VERSION=${BUILD_NUMBER}.${GITSHA1}
+BuildNumber=${BuildNumber:=1}
+DOCKER_IMAGE_VERSION=${GITSHA1}
 
-docker build -t andrewlock/aspnetcore-in-docker:$DOCKER_IMAGE_VERSION .
+docker build -t andrewlock/aspnetcore-in-docker:$DOCKER_IMAGE_VERSION --build-arg BuildNumber="$BuildNumber" .
 
 # tag image with latest tag
 #docker tag andrewlock/aspnetcore-in-docker:$DOCKER_IMAGE_VERSION andrewlock/aspnetcore-in-docker:latest
