@@ -2,7 +2,10 @@
 var target = Argument("Target", "Default");
 var configuration = Argument("Configuration", "Release");
 
-Information("Running target " + target + " in configuration " + configuration);
+// Set the package version based on an environment variable 
+var packageVersion = 
+    HasArgument("PackageVersion") ? Argument<string>("PackageVersion") :  
+    !string.IsNullOrEmpty(EnvironmentVariable("PackageVersion")) ? EnvironmentVariable("PackageVersion") : "0.1.0";
 
 // The build number to use in the version number of the built NuGet packages.
 // There are multiple ways this value can be passed, this is a common pattern.
@@ -21,6 +24,8 @@ var buildNumber =
 // So always add a beta prefix if not doing a tag
 var isTag = EnvironmentVariable("APPVEYOR_REPO_TAG") != null && EnvironmentVariable("APPVEYOR_REPO_TAG") == "true" ;
 var revision = isTag ? null : "beta-" +buildNumber.ToString("D4");
+
+Information($"Running target {target} in {configuration} configuration, version {packageVersion}{revision}");
 
 var artifactsDirectory = Directory("./artifacts");
 var distDirectory = Directory("./dist");
@@ -47,7 +52,8 @@ Task("Restore")
             ".",
             new DotNetCoreBuildSettings()
             {
-                Configuration = configuration
+                Configuration = configuration,
+                ArgumentCustomization = args => args.Append($"--no-restore /p:Version={packageVersion}"),
             });
     });
  
@@ -65,7 +71,8 @@ Task("Test")
                 new DotNetCoreTestSettings()
                 {
                     Configuration = configuration,
-                    NoBuild = true
+                    NoBuild = true,
+                    ArgumentCustomization = args => args.Append($"--no-restore /p:Version={packageVersion}"),
                 });
         }
     });
@@ -84,6 +91,7 @@ Task("Pack")
                 OutputDirectory = artifactsDirectory,
                 VersionSuffix = revision,
                 NoBuild = true,
+                ArgumentCustomization = args => args.Append($"/p:PackageVersion={packageVersion}"),
             });
     });
 
@@ -97,6 +105,7 @@ Task("PublishWeb")
                 Configuration = configuration,
                 OutputDirectory = distDirectory,
                 VersionSuffix = revision,
+                ArgumentCustomization = args => args.Append($"/p:Version={packageVersion}"),
             });
     });
 

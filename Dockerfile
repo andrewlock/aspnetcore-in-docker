@@ -1,6 +1,9 @@
 # Build image
 FROM microsoft/aspnetcore-build:2.0.3 AS builder
 
+ARG PackageVersion
+ENV PackageVersion=$PackageVersion
+
 # Install mono for Cake
 ENV MONO_VERSION 5.4.1.6
 
