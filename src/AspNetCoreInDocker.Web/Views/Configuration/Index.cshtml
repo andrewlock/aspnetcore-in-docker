@@ -1,0 +1,13 @@
+﻿@using Microsoft.Extensions.Configuration;
+@model IConfiguration
+@{
+    ViewData["Title"] = "Configuration";
+}
+
+<dl>
+    @foreach(var kvp in Model.AsEnumerable())
+    {
+    <dt>@kvp.Key</dt>
+    <dd>@kvp.Value</dd>
+    }
+</dl>

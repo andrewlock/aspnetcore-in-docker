@@ -20,6 +20,10 @@ namespace AspNetCoreInDocker.Web
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureAppConfiguration((context, builder) => {
+                    var path = Path.Combine(context.HostingEnvironment.ContentRootPath, "kube-secrets");
+                    builder.AddKubeSecrets(path, optional:true);
+                })
                 .Build();
     }
 }
