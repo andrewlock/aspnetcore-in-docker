@@ -1,3 +1,6 @@
+#!/bin/bash
+set -eux
+BUILD_NUMBER=${BUILD_NUMBER:=0.0.1}
 GITSHA1=${GITSHA1:=$(git rev-parse HEAD)}
 DOCKER_IMAGE_VERSION=${BUILD_NUMBER}.${GITSHA1}
 
