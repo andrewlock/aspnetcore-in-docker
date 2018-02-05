@@ -1,15 +1,9 @@
 # Build image
 FROM microsoft/aspnetcore-build:2.0.3 AS builder
 WORKDIR /sln
-COPY ./aspnetcore-in-docker.sln ./NuGet.config  ./
 
-# Copy all the csproj files and restore to cache the layer for faster builds
-# The dotnet_build.sh script does this anyway, so superfluous, but docker can 
-# cache the intermediate images so _much_ faster
-COPY ./src/AspNetCoreInDocker.Lib/AspNetCoreInDocker.Lib.csproj  ./src/AspNetCoreInDocker.Lib/AspNetCoreInDocker.Lib.csproj
-COPY ./src/AspNetCoreInDocker.Web/AspNetCoreInDocker.Web.csproj  ./src/AspNetCoreInDocker.Web/AspNetCoreInDocker.Web.csproj
-COPY ./test/AspNetCoreInDocker.Web.Tests/AspNetCoreInDocker.Web.Tests.csproj  ./test/AspNetCoreInDocker.Web.Tests/AspNetCoreInDocker.Web.Tests.csproj
-RUN dotnet restore
+COPY projectfiles.tar .
+RUN tar -xvf projectfiles.tar && dotnet restore
 
 COPY ./test ./test
 COPY ./src ./src
