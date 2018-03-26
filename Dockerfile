@@ -1,9 +1,15 @@
 # Build image
-FROM microsoft/aspnetcore-build:2.0.3 AS builder
+FROM microsoft/aspnetcore-build:2.0.6-2.1.101-stretch AS builder
 WORKDIR /sln
 
-COPY projectfiles.tar .
-RUN tar -xvf projectfiles.tar && dotnet restore
+COPY ./*.sln ./NuGet.config  ./
+# Copy the main source project files
+COPY src/*/*.csproj ./
+RUN for file in $(ls *.csproj); do mkdir -p src/${file%.*}/ && mv $file src/${file%.*}/; done
+# Copy the test project files
+COPY test/*/*.csproj ./
+RUN for file in $(ls *.csproj); do mkdir -p test/${file%.*}/ && mv $file test/${file%.*}/; done 
+RUN dotnet restore
 
 COPY ./test ./test
 COPY ./src ./src
