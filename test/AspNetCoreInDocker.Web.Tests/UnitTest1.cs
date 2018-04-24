@@ -8,7 +8,7 @@ namespace AspNetCoreInDocker.Web.Tests
         [Fact]
         public void Test1()
         {
-
+            throw new Exception("Testing that this fails the build");
         }
     }
 }
