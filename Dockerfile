@@ -17,7 +17,7 @@ COPY ./test ./test
 COPY ./src ./src
 RUN dotnet build -c Release --no-restore
 
-RUN find /test -name '*.csproj' -print0 | xargs -L1 -0 -P 8 dotnet test  -c Release --no-build --no-restore
+RUN find /test -name '*.csproj' -print0 | xargs -L1 -0 dotnet test -c Release --no-build --no-restore
 
 RUN dotnet publish "./src/AspNetCoreInDocker.Web/AspNetCoreInDocker.Web.csproj" -c Release -o "../../dist" --no-restore
 
